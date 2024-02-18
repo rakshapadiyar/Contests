@@ -1,0 +1,84 @@
+https://leetcode.com/problems/most-frequent-prime/
+3044. Most Frequent Prime
+
+class Solution {
+    public  HashMap<Integer,Integer> hm=new HashMap<>();
+    public int[][] m;
+    public boolean isPrime(int n)
+    {
+        if(n==1)
+            return false;
+        if(n==2 || n==3)
+            return true;
+        if(n%2==0 || n%3==0)
+            return false;
+        for(int i=5;i<=Math.sqrt(n);i=i+6)
+        {
+            if((n%i==0) || (n%(i+2)==0))
+                return false;
+        }
+        return true;
+    }
+
+    public void traverse(int row,int col, int horiz, int vert)
+    {
+        int num= m[row][col];
+        if(isPrime(num))
+        hm.put(num,hm.getOrDefault(num,0)+1);
+        row=row+vert;
+        col=col+horiz;
+        while(row>=0 && row<m.length && col>=0 && col<m[0].length)
+        {
+            num=num*10+m[row][col];
+            if(isPrime(num))
+            hm.put(num,hm.getOrDefault(num,0)+1);
+            row=row+vert;
+            col=col+horiz; 
+        }
+    }
+    
+    public int mostFrequentPrime(int[][] mat) {
+        m=mat;
+        for(int i=0;i<mat.length;i++)
+        {
+            for(int j=0;j<mat[0].length;j++)
+            {
+                int num=mat[i][j];
+                traverse(i,j,0,1);//north
+                traverse(i,j,0,-1);//south
+                traverse(i,j,1,0);//east
+                traverse(i,j,-1,0);//west
+                traverse(i,j,1,1);//northeast
+                traverse(i,j,1,-1);//northwest
+                traverse(i,j,-1,1);//southeast
+                traverse(i,j,-1,-1);//southwest
+            }
+        }
+        int highestFreq=-1, highestNum=-1; 
+        for(Map.Entry<Integer,Integer> e: hm.entrySet())
+        {
+
+            int num=e.getKey();
+            int freq=e.getValue();
+         //  System.out.println(" key "+num+" freq "+freq);
+            if(num>10 && isPrime(num))
+            {
+                if(freq>highestFreq)
+                {
+                    highestNum=num;
+                    highestFreq=freq;
+                }
+                if(freq==highestFreq)
+                {
+                    if(num>highestNum)
+                    {
+                        highestNum=num;
+                    }
+                }
+            }
+        }
+//System.out.println("highesNum is "+highestNum+" freq "+highestFreq);
+        return highestNum;
+        
+    }
+}
